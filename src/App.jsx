@@ -6,6 +6,7 @@ import NewBudgetIcon from "./img/nuevo-gasto.svg";
 
 import Header from "./components/Header";
 import Modal from "./components/Modal";
+import ExpenseList from "./components/ExpenseList";
 
 function App() {
   const [budget, setBudget] = useState(0);
@@ -21,22 +22,30 @@ function App() {
 
   const saveExpense = (expense) => {
     expense.id = generateId();
+    expense.date = Date.now();
     setExpenses([...expenses, expense]);
     setAnimateModal(false);
     setTimeout(setModal, 500, false);
   };
+
   return (
-    <>
+    <div className={modal ? "fijar" : ""}>
       <Header
         budget={budget}
         setBudget={setBudget}
         isValidBudget={isValidBudget}
         setIsValidBudget={setIsValidBudget}
+        expenses={expenses}
       />
       {isValidBudget && (
-        <div className="nuevo-gasto">
-          <img src={NewBudgetIcon} alt="nuevo gasto" onClick={handleNewExpense} />
-        </div>
+        <>
+          <main>
+            <ExpenseList expenses={expenses} />
+          </main>
+          <div className="nuevo-gasto">
+            <img src={NewBudgetIcon} alt="nuevo gasto" onClick={handleNewExpense} />
+          </div>
+        </>
       )}
 
       {modal && (
@@ -47,7 +56,7 @@ function App() {
           saveExpense={saveExpense}
         />
       )}
-    </>
+    </div>
   );
 }
 
