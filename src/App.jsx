@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { generateId } from "./utils";
 
@@ -9,23 +9,63 @@ import Modal from "./components/Modal";
 import ExpenseList from "./components/ExpenseList";
 
 function App() {
-  const [budget, setBudget] = useState(0);
+  const [budget, setBudget] = useState(Number(localStorage.getItem("budget")) ?? 0);
   const [isValidBudget, setIsValidBudget] = useState(false);
   const [modal, setModal] = useState(false);
   const [animateModal, setAnimateModal] = useState(false);
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState(
+    localStorage.getItem("expenses") ? JSON.parse(localStorage.getItem("expenses")) : []
+  );
+  const [expenseToEdit, setExpenseToEdit] = useState({});
+
+  useEffect(() => {
+    if (Object.keys(expenseToEdit).length > 0) {
+      setModal(true);
+      setTimeout(setAnimateModal, 500, true);
+    }
+  }, [expenseToEdit]);
+
+  useEffect(() => {
+    localStorage.setItem("budget", budget ?? 0);
+  }, [budget]);
+
+  useEffect(() => {
+    localStorage.setItem("expenses", JSON.stringify(expenses) ?? []);
+  }, [expenses]);
+
+  useEffect(() => {
+    const budgetFromLocalStorage = Number(localStorage.getItem("budget") ?? 0);
+
+    if (budgetFromLocalStorage > 0) setIsValidBudget(true);
+  }, []);
 
   const handleNewExpense = () => {
     setModal(true);
+    setExpenseToEdit({});
+
     setTimeout(setAnimateModal, 500, true);
   };
 
-  const saveExpense = (expense) => {
-    expense.id = generateId();
-    expense.date = Date.now();
-    setExpenses([...expenses, expense]);
+  const upsertExpense = (expense) => {
+    if (expense.id) {
+      const updatedExpenses = expenses.map((expenseFromState) =>
+        expenseFromState.id === expense.id ? expense : expenseFromState
+      );
+      setExpenses(updatedExpenses);
+      setExpenseToEdit({});
+    } else {
+      expense.id = generateId();
+      expense.date = Date.now();
+      setExpenses([...expenses, expense]);
+    }
+
     setAnimateModal(false);
     setTimeout(setModal, 500, false);
+  };
+
+  const deleteExpense = (id) => {
+    const updatedExpenses = expenses.filter((expense) => expense.id !== id);
+    setExpenses(updatedExpenses);
   };
 
   return (
@@ -40,7 +80,11 @@ function App() {
       {isValidBudget && (
         <>
           <main>
-            <ExpenseList expenses={expenses} />
+            <ExpenseList
+              expenses={expenses}
+              setExpenseToEdit={setExpenseToEdit}
+              deleteExpense={deleteExpense}
+            />
           </main>
           <div className="nuevo-gasto">
             <img src={NewBudgetIcon} alt="nuevo gasto" onClick={handleNewExpense} />
@@ -53,7 +97,9 @@ function App() {
           setModal={setModal}
           animateModal={animateModal}
           setAnimateModal={setAnimateModal}
-          saveExpense={saveExpense}
+          upsertExpense={upsertExpense}
+          expenseToEdit={expenseToEdit}
+          setExpenseToEdit={setExpenseToEdit}
         />
       )}
     </div>

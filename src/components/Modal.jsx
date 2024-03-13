@@ -1,17 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import CloseButton from "../img/cerrar.svg";
 
 import Message from "./Message";
 
-const Modal = ({ setModal, animateModal, setAnimateModal, saveExpense }) => {
+const Modal = ({
+  setModal,
+  animateModal,
+  setAnimateModal,
+  upsertExpense,
+  expenseToEdit,
+  setExpenseToEdit,
+}) => {
   const [message, setMessage] = useState("");
   const [expenseName, setExpenseName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("");
+  const [date, setDate] = useState("");
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    if (Object.keys(expenseToEdit).length > 0) {
+      setExpenseName(expenseToEdit.expenseName);
+      setQuantity(expenseToEdit.quantity);
+      setCategory(expenseToEdit.category);
+      setDate(expenseToEdit.date);
+      setId(expenseToEdit.id);
+    }
+  }, []);
 
   const hideModal = () => {
     setAnimateModal(false);
+    setExpenseToEdit({});
     setTimeout(setModal, 500, false);
   };
 
@@ -23,7 +43,7 @@ const Modal = ({ setModal, animateModal, setAnimateModal, saveExpense }) => {
       return;
     }
 
-    saveExpense({ expenseName, quantity, category });
+    upsertExpense({ expenseName, quantity, category, date, id });
   };
 
   return (
@@ -33,7 +53,7 @@ const Modal = ({ setModal, animateModal, setAnimateModal, saveExpense }) => {
       </div>
       <form onSubmit={handleSubmit} className={`formulario ${animateModal ? "animar" : "cerrar"}`}>
         <fieldset>
-          <legend>{"Nuevo gasto".toUpperCase()}</legend>
+          <legend>{expenseToEdit.id ? "EDITAR GASTO" : "NUEVO GASTO"}</legend>
           {message && <Message type="error">{message}</Message>}
           <div className="campo">
             <label htmlFor="nombre">Nombre gasto</label>
@@ -67,7 +87,7 @@ const Modal = ({ setModal, animateModal, setAnimateModal, saveExpense }) => {
               <option value="salud">Salud</option>
               <option value="suscripciones">Suscripciones</option>
             </select>
-            <input type="submit" value="Añadir gasto" />
+            <input type="submit" value={expenseToEdit.id ? "Guardar cambios" : "Añadir gasto"} />
           </div>
         </fieldset>
       </form>
