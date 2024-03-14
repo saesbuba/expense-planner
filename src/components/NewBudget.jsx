@@ -8,7 +8,7 @@ const NewBudget = ({ budget, setBudget, setIsValidBudget }) => {
     e.preventDefault();
 
     if (!budget || budget < 0) {
-      setMessage("No es un presupuesto valido");
+      setMessage("Is not a valid budget");
       return;
     }
     setMessage("");
@@ -22,11 +22,11 @@ const NewBudget = ({ budget, setBudget, setIsValidBudget }) => {
           <input
             type="number"
             className="nuevo-presupuesto"
-            placeholder="Añade presupuesto"
+            placeholder="Add budget"
             value={budget}
             onChange={(e) => setBudget(Number(e.target.value))}
           />
-          <input type="submit" value="Añadir" />
+          <input type="submit" value="Add" />
           {message && <Message type="error">{message}</Message>}
         </div>
       </form>

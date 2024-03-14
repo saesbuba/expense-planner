@@ -49,45 +49,45 @@ const Modal = ({
   return (
     <div className="modal">
       <div className="cerrar-modal">
-        <img src={CloseButton} alt="boton cerrar" onClick={hideModal} />
+        <img src={CloseButton} alt="close button" onClick={hideModal} />
       </div>
       <form onSubmit={handleSubmit} className={`formulario ${animateModal ? "animar" : "cerrar"}`}>
         <fieldset>
-          <legend>{expenseToEdit.id ? "EDITAR GASTO" : "NUEVO GASTO"}</legend>
+          <legend>{expenseToEdit.id ? "EDIT EXPENSE" : "ADD EXPENSE"}</legend>
           {message && <Message type="error">{message}</Message>}
           <div className="campo">
-            <label htmlFor="nombre">Nombre gasto</label>
+            <label htmlFor="nombre">Expense description</label>
             <input
               id="name"
               type="text"
-              placeholder="Añade el nombre del gasto"
+              placeholder="Add expense description"
               value={expenseName}
               onChange={(e) => setExpenseName(e.target.value)}
             />
           </div>
           <div className="campo">
-            <label htmlFor="cantidad">Cantidad</label>
+            <label htmlFor="cantidad">Amount</label>
             <input
               id="quantity"
               type="number"
-              placeholder="Añade la cantidad del gasto"
+              placeholder="Add the amount of the expense"
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
             />
           </div>
           <div className="campo">
-            <label htmlFor="categoria">Categoria</label>
+            <label htmlFor="categoria">Category</label>
             <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="">-- SELECCIONE --</option>
-              <option value="ahorro">Ahorro</option>
-              <option value="comida">Comida</option>
-              <option value="casa">Casa</option>
-              <option value="gastos">Gastos</option>
-              <option value="ocio">Ocio</option>
-              <option value="salud">Salud</option>
-              <option value="suscripciones">Suscripciones</option>
+              <option value="">-- SELECT A CATEGORY --</option>
+              <option value="saving">Saving</option>
+              <option value="food">Food</option>
+              <option value="home">Home</option>
+              <option value="expenses">Expenses</option>
+              <option value="leisure">Leisure</option>
+              <option value="health">Health</option>
+              <option value="subscriptions">Subscriptions</option>
             </select>
-            <input type="submit" value={expenseToEdit.id ? "Guardar cambios" : "Añadir gasto"} />
+            <input type="submit" value={expenseToEdit.id ? "Save changes" : "Add expense"} />
           </div>
         </fieldset>
       </form>
